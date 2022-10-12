@@ -45,15 +45,18 @@ public class ApiClient {
         try{
             File a= conectar(context);
         FileOutputStream fo=new FileOutputStream(a);
-        ObjectOutputStream oos=new ObjectOutputStream(fo);
+        BufferedOutputStream bo= new BufferedOutputStream(fo);
+        ObjectOutputStream oos=new ObjectOutputStream(bo);
         oos.writeObject(usuario);
-        fo.flush();
+        bo.flush();
         fo.close();
 
     } catch (FileNotFoundException e) {
         e.printStackTrace();
+            Log.d("salida",e.getMessage());
     }catch (IOException io){
         io.printStackTrace();
+        Log.d("salida",io.getMessage());
     }
 
     }
@@ -63,7 +66,8 @@ public class ApiClient {
         try{
             File a= conectar(context);
             FileInputStream fi=new FileInputStream(a);
-            ObjectInputStream ois=new ObjectInputStream(fi);
+            BufferedInputStream bi= new BufferedInputStream(fi);
+            ObjectInputStream ois=new ObjectInputStream(bi);
             usuario = (Usuario) ois.readObject();
             fi.close();
         } catch (FileNotFoundException | ClassNotFoundException e) {
@@ -78,23 +82,18 @@ public class ApiClient {
 
         Usuario u = null;
         Boolean loginOk= false;
-        try{
-            File a= conectar(context);
+
+            /*File a= conectar(context);
             FileInputStream fi=new FileInputStream(a);
             ObjectInputStream ois=new ObjectInputStream(fi);
             Usuario usuario = (Usuario) ois.readObject();
-            fi.close();
+            fi.close();*/
+            Usuario usuario=leer(context);
             if(usuario.getEmail().equals(mail) && usuario.getPassword().equals(pass)){
                  u= new Usuario(usuario.getDni(), usuario.getNombre(), usuario.getApellido(), usuario.getEmail(), usuario.getPassword());
                 loginOk=true;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
         if(loginOk){
             return u;
         }else
